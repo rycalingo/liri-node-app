@@ -13,24 +13,24 @@ var userEntry = process.argv[2];
 var userArg = process.argv[3];
 
 // Log Entered Command
-var logEntry = function(val, arg = 'none') {
+var logEntry = (val, arg = 'none') => {
   var d = new Date();
   var date = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
   var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
   var dateTime = date + '_' + time + '_';
   // console.log(dateTime);
-  fs.appendFile('log.txt', dateTime + val + ' ' + JSON.stringify(arg) +'\r', function(err) {
+  fs.appendFile('log.txt', dateTime + val + ' ' + JSON.stringify(arg) +'\r', (err) => {
 
     if (err) return console.log(val);
   });
 };
 
 // Twitter API Call
-var getMyTweets = function() {
+var getMyTweets = () => {
   var client = new Twitter(keys.twitter);
   var params = { screen_name: 'G_Ry07', count: 15 };
 
-  client.get('statuses/user_timeline/', params, function(err, data, res) {
+  client.get('statuses/user_timeline/', params, (err, data, res) => {
 	// console.log(res);
 	if (!err) {
 
@@ -52,7 +52,7 @@ var getMyTweets = function() {
 
 };
 // Spotify API Call
-var getMySpotify = function(songName) {
+var getMySpotify = (songName) => {
   //If it doesn't find a song, find Ace of Base "The Sign"
 
   var spotify = new Spotify(keys.spotify);
@@ -60,7 +60,7 @@ var getMySpotify = function(songName) {
     songName = 'The Sign';
   };
 
-  spotify.search({ type: 'track', limit: '5', query: songName }, function(err, data) {
+  spotify.search({ type: 'track', limit: '5', query: songName }, (err, data) => {
     if (err) { return console.log('Error: ' + err) };
 
     var songs = data.tracks.items;
@@ -86,16 +86,16 @@ var getMySpotify = function(songName) {
 };
 
 // Movie API Call
-var getMyMovie = function(movieName) {
+var getMyMovie = (movieName) => {
 
   if (movieName === undefined) { movieName = 'Mr Nobody'; };
 
   var urlQuery = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=full&tomatoes=true&r=json&apikey=trilogy";
-  request(urlQuery, function(err, res, data) {
+  request(urlQuery, (err, res, data) => {
     if (!err && res.statusCode == 200) {
       
-      var movieInfo = [];
       var movieData = JSON.parse(data);
+      var movieInfo = [];
 
 // push movie info into an array
       movieInfo.push({
@@ -120,14 +120,16 @@ var getMyMovie = function(movieName) {
 };
 
 // do-what-it-says
-var doWhatItSays = function() {
-  fs.readFile("random.txt", "utf8", function(err, data) {
-    var arg = data.split(',')
-    return arg[1];
+var doWhatItSays = () => {
+console.log('In doWhatItSays');
+  fs.readFile("random.txt", "utf8", (err, data) => {
+    var randomPick = data.split(',')
+    
+    chooseCommand(randomPick[0], randomPick[1]);
   });
 };
 
-var chooseCommand = function(command, arg) {
+var chooseCommand = (command, arg) => {
 	logEntry(command, arg);
 
 	switch (command) {
@@ -151,7 +153,7 @@ var chooseCommand = function(command, arg) {
 		default:
 			// node liri.js do-what-it-says
 			console.log('do-what-it-says');
-			getMySpotify(doWhatItSays());
+			doWhatItSays();
 	}
 };
 

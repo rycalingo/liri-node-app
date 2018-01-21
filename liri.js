@@ -79,6 +79,39 @@ var getMySpotify = function(songName) {
   });
 };
 
+// Movie API Call
+var getMyMovie = function(movieName) {
+
+  if (movieName === undefined) {
+    movieName = 'Mr Nobody';
+  };
+
+  var urlQuery = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=full&tomatoes=true&r=json&apikey=trilogy";
+
+  request(urlQuery, function(err, res, data) {
+    if (!err && res.statusCode == 200) {
+      var movieInfo = [];
+      var movieData = JSON.parse(data);
+
+      movieInfo.push({
+		'Title: ' : movieData.Title,
+		'Year: ' : movieData.Year,
+		'Rated: ' : movieData.Rated,
+		'IMDB Rating: ' : movieData.imdbRating,
+		'Country: ' : movieData.Country,
+		'Language: ' : movieData.Language,
+		'Plot: ' : movieData.Plot,
+		'Actors: ' : movieData.Actors,
+		'Rotten Tomatoes Rating: ' : movieData.tomatoRating,
+		'Rotten Tomatoes URL: ' : movieData.tomatoURL,
+	  });
+      
+      console.log(movieInfo);
+	}
+   });
+
+};
+
 var chooseCommand = function(command, arg) {
 	logEntry(command, arg);
 
@@ -97,6 +130,7 @@ var chooseCommand = function(command, arg) {
 		case 'movie-this':
 			// movie-this
 			console.log('movie-this');
+			getMyMovie(arg);
 			break;
 
 		default:

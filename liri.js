@@ -119,6 +119,14 @@ var getMyMovie = function(movieName) {
 
 };
 
+// do-what-it-says
+var doWhatItSays = function() {
+  fs.readFile("random.txt", "utf8", function(err, data) {
+    var arg = data.split(',')
+    return arg[1];
+  });
+};
+
 var chooseCommand = function(command, arg) {
 	logEntry(command, arg);
 
@@ -143,6 +151,7 @@ var chooseCommand = function(command, arg) {
 		default:
 			// node liri.js do-what-it-says
 			console.log('do-what-it-says');
+			getMySpotify(doWhatItSays());
 	}
 };
 

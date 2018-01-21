@@ -51,7 +51,36 @@ var getMyTweets = function() {
   });
 
 };
+// Spotify API Call
+var getMySpotify = function(songName) {
+  //If it doesn't find a song, find Ace of Base "The Sign"
 
+  var spotify = new Spotify(keys.spotify);
+  if (songName === undefined) {
+    songName = 'The Sign';
+  };
+
+  spotify.search({ type: 'track', query: songName }, function(err, data) {
+    if (err) {
+      console.log('Error occurred: ' + err);
+      return;
+    }
+
+    var songs = data.tracks.items;
+    var data = []; //empty array to hold data
+
+    for (var i = 0; i < songs.length; i++) {
+      data.push({
+        'artist(s)': songs[i].artists.map(getArtistNames),
+        'song name: ': songs[i].name,
+        'preview song: ': songs[i].preview_url,
+        'album: ': songs[i].album.name,
+      });
+    }
+    console.log(data);
+    writeToLog(data);
+  });
+};
 
 var chooseCommand = function(command, arg) {
 	logEntry(command);
@@ -65,6 +94,7 @@ var chooseCommand = function(command, arg) {
 		case 'spotify-this-song':
 			// spotify-this-song
 			console.log('spotify-this-song');
+			getMySpotify(arg);
 			break;
 
 		case 'movie-this':

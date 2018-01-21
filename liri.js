@@ -18,7 +18,7 @@ var logEntry = function(val, arg = 'none') {
   var date = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
   var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
   var dateTime = date + '_' + time + '_';
-  console.log(dateTime);
+  // console.log(dateTime);
   fs.appendFile('log.txt', dateTime + val + ' ' + JSON.stringify(arg) +'\r', function(err) {
 
     if (err) return console.log(val);
@@ -61,54 +61,61 @@ var getMySpotify = function(songName) {
   };
 
   spotify.search({ type: 'track', limit: '5', query: songName }, function(err, data) {
-    if (err) { console.log('Error: ' + err) return };
+    if (err) { return console.log('Error: ' + err) };
 
     var songs = data.tracks.items;
     var songInfo = [];
 
     for (var i = 0; i < songs.length; i++) {
 // console.log(songs);
+// push music info into an array
       songInfo.push({
-        'artist(s)': songs[i].artists.map(artist => { return artist.name }),
-        'song name: ': songs[i].name,
-        'preview song: ': songs[i].preview_url,
-        'album: ': songs[i].album.name,
+        'Artist(s)': songs[i].artists.map(artist => { return artist.name }),
+        'Song': songs[i].name,
+        'Preview Song': songs[i].preview_url,
+        'Album': songs[i].album.name,
       });
     }
-    console.log(songInfo);
+// console.log songInfo    
+    songInfo.forEach( (item) => {
+    	for (let key in item) {
+    		console.log(JSON.stringify(key) + ': ' + JSON.stringify(item[key]));
+    	}
+    })
   });
 };
 
 // Movie API Call
 var getMyMovie = function(movieName) {
 
-  if (movieName === undefined) {
-    movieName = 'Mr Nobody';
-  };
+  if (movieName === undefined) { movieName = 'Mr Nobody'; };
 
   var urlQuery = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=full&tomatoes=true&r=json&apikey=trilogy";
-
   request(urlQuery, function(err, res, data) {
     if (!err && res.statusCode == 200) {
+      
       var movieInfo = [];
       var movieData = JSON.parse(data);
 
+// push movie info into an array
       movieInfo.push({
-		'Title: ' : movieData.Title,
-		'Year: ' : movieData.Year,
-		'Rated: ' : movieData.Rated,
-		'IMDB Rating: ' : movieData.imdbRating,
-		'Country: ' : movieData.Country,
-		'Language: ' : movieData.Language,
-		'Plot: ' : movieData.Plot,
-		'Actors: ' : movieData.Actors,
-		'Rotten Tomatoes Rating: ' : movieData.tomatoRating,
-		'Rotten Tomatoes URL: ' : movieData.tomatoURL,
+	    'Title' : movieData.Title,
+	    'Year' : movieData.Year,
+	    'IMDB Rating' : movieData.imdbRating,
+	    'Rotten Tomatoes Rating' : movieData.tomatoRating,
+	    'Country' : movieData.Country,
+	    'Language' : movieData.Language,
+	    'Plot' : movieData.Plot,
+	    'Actors' : movieData.Actors,
 	  });
-      
-      console.log(movieInfo);
+// console.log movieInfo
+	  movieInfo.forEach( (item) => {
+	    for (let key in item) {
+	      console.log(JSON.stringify(key) + ': ' + JSON.stringify(item[key]));
+	    }
+	  });
 	}
-   });
+  });
 
 };
 
@@ -117,24 +124,24 @@ var chooseCommand = function(command, arg) {
 
 	switch (command) {
 		case 'my-tweets':
-			// my-tweets
+			// node liri.js my-tweets
 			console.log('my-tweets');
 			getMyTweets();
 			break;
 		case 'spotify-this-song':
-			// spotify-this-song
+			// node liri.js spotify-this-song
 			console.log('spotify-this-song');
 			getMySpotify(arg);
 			break;
 
 		case 'movie-this':
-			// movie-this
+			// node liri.js movie-this
 			console.log('movie-this');
 			getMyMovie(arg);
 			break;
 
 		default:
-			// do-what-it-says
+			// node liri.js do-what-it-says
 			console.log('do-what-it-says');
 	}
 };

@@ -13,13 +13,13 @@ var userEntry = process.argv[2];
 var userArg = process.argv[3];
 
 // Log Entered Command
-var logEntry = function(val) {
+var logEntry = function(val, arg = 'none') {
   var d = new Date();
   var date = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
   var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
   var dateTime = date + '_' + time + '_';
   console.log(dateTime);
-  fs.appendFile('log.txt', dateTime + val + '\r', function(err) {
+  fs.appendFile('log.txt', dateTime + val + ' ' + JSON.stringify(arg) +'\r', function(err) {
 
     if (err) return console.log(val);
   });
@@ -60,30 +60,27 @@ var getMySpotify = function(songName) {
     songName = 'The Sign';
   };
 
-  spotify.search({ type: 'track', query: songName }, function(err, data) {
-    if (err) {
-      console.log('Error occurred: ' + err);
-      return;
-    }
+  spotify.search({ type: 'track', limit: '5', query: songName }, function(err, data) {
+    if (err) { console.log('Error: ' + err) return };
 
     var songs = data.tracks.items;
-    var data = []; //empty array to hold data
+    var songInfo = [];
 
     for (var i = 0; i < songs.length; i++) {
-      data.push({
-        'artist(s)': songs[i].artists.map(getArtistNames),
+// console.log(songs);
+      songInfo.push({
+        'artist(s)': songs[i].artists.map(artist => { return artist.name }),
         'song name: ': songs[i].name,
         'preview song: ': songs[i].preview_url,
         'album: ': songs[i].album.name,
       });
     }
-    console.log(data);
-    writeToLog(data);
+    console.log(songInfo);
   });
 };
 
 var chooseCommand = function(command, arg) {
-	logEntry(command);
+	logEntry(command, arg);
 
 	switch (command) {
 		case 'my-tweets':

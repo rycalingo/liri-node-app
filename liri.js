@@ -9,9 +9,8 @@ var Spotify = require('node-spotify-api');
 
 var keys = require('./keys.js');
 
-var spotify = new Spotify(keys.spotify);
-
 var userEntry = process.argv[2];
+var userArg = process.argv[3];
 
 // Log Entered Command
 var logEntry = function(val) {
@@ -26,15 +25,42 @@ var logEntry = function(val) {
   });
 };
 
+// Twitter API Call
+var getMyTweets = function() {
+  var client = new Twitter(keys.twitter);
+  var params = { screen_name: 'G_Ry07', count: 15 };
 
-var chooseCommand = function(command) {
+  client.get('statuses/user_timeline/', params, function(err, data, res) {
+	// console.log(res);
+	if (!err) {
+
+	  for(var i = 0; i < data.length; i++) {
+	    var twitterItem =
+		  '#' + i + ' ======================\n' +
+		  '@' + data[i].user.screen_name + ': ' + 
+		  data[i].text + '\n' + 
+		  data[i].created_at + '\n';
+		  
+		  console.log(twitterItem);
+		}
+	}else {
+
+	  console.log('Error :'+ err);
+	  return;
+	}
+  });
+
+};
+
+
+var chooseCommand = function(command, arg) {
 	logEntry(command);
 
 	switch (command) {
 		case 'my-tweets':
 			// my-tweets
 			console.log('my-tweets');
-			// getMyTweets();
+			getMyTweets();
 			break;
 		case 'spotify-this-song':
 			// spotify-this-song
@@ -52,4 +78,4 @@ var chooseCommand = function(command) {
 	}
 };
 
-chooseCommand(userEntry);
+chooseCommand(userEntry, userArg);

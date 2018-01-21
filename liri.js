@@ -14,6 +14,18 @@ var client = new Twitter(keys.twitter);
 
 var userEntry = process.argv[2];
 
+var logEntry = function(val) {
+  fs.appendFile("log.txt", '\r\n\r\n');
+
+  fs.appendFile("log.txt", JSON.stringify(val), function(err) {
+    if (err) {
+      return console.log(val);
+    }
+
+    console.log("log.txt was updated!");
+  });
+};
+
 var chooseCommand = function(command) {
 
 	switch (command) {

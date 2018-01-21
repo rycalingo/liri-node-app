@@ -10,45 +10,46 @@ var Spotify = require('node-spotify-api');
 var keys = require('./keys.js');
 
 var spotify = new Spotify(keys.spotify);
-var client = new Twitter(keys.twitter);
 
 var userEntry = process.argv[2];
 
+// Log Entered Command
 var logEntry = function(val) {
-  fs.appendFile("log.txt", '\r\n\r\n');
+  var d = new Date();
+  var date = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+  var dateTime = date + '_' + time + '_';
+  console.log(dateTime);
+  fs.appendFile('log.txt', dateTime + val + '\r', function(err) {
 
-  fs.appendFile("log.txt", JSON.stringify(val), function(err) {
-    if (err) {
-      return console.log(val);
-    }
-
-    console.log("log.txt was updated!");
+    if (err) return console.log(val);
   });
 };
 
+
 var chooseCommand = function(command) {
+	logEntry(command);
 
 	switch (command) {
-		case "my-tweets":
+		case 'my-tweets':
 			// my-tweets
-			console.log("my-tweets");
+			console.log('my-tweets');
+			// getMyTweets();
 			break;
-		case "spotify-this-song":
+		case 'spotify-this-song':
 			// spotify-this-song
-			console.log("spotify-this-song");
+			console.log('spotify-this-song');
 			break;
 
-		case "movie-this":
+		case 'movie-this':
 			// movie-this
-			console.log("movie-this");
+			console.log('movie-this');
 			break;
 
 		default:
 			// do-what-it-says
-			console.log("do-what-it-says");
+			console.log('do-what-it-says');
 	}
 };
 
 chooseCommand(userEntry);
-
-
